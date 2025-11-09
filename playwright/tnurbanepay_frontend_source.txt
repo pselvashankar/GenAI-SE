@@ -1,0 +1,553 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>
+
+</title><meta name="viewport" content="width=device-width">
+   
+    
+  <!-- Fonts START -->
+  <link href="assets/global/css/font.css" rel="stylesheet" type="text/css">
+  <!-- Fonts END -->
+
+  <!-- Global styles START -->          
+  <link href="assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"><link href="assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Global styles END --> 
+   
+  <!-- Page level plugin styles START -->
+  <link href="assets/global/plugins/fancybox/source/jquery.fancybox.css" rel="stylesheet">
+  <!-- Page level plugin styles END -->
+
+  <!-- Theme styles START -->
+  <link href="assets/global/css/components.css" rel="stylesheet"><link href="assets/frontend/layout/css/style.css" rel="stylesheet"><link href="assets/frontend/layout/css/style-responsive.css" rel="stylesheet"><link href="assets/frontend/layout/css/themes/green.css" rel="stylesheet"><link href="assets/frontend/layout/css/custom.css" rel="stylesheet"><link href="assets/frontend/pages/css/jquery-ui.css" rel="stylesheet">
+  <!-- Theme styles END -->
+    <!-- Script -->
+     <script type="text/javascript">
+         function isEnterKey(evt) {
+             var charCode = (evt.which) ? evt.which : event.keyCode
+             if (charCode == 8) {
+                 if (window.event.srcElement.type == "text" || window.event.srcElement.type == "textarea") {
+                     return false;
+                 }
+                 else {
+                     return true;
+                 }
+             }
+             else if (charCode == 122) {
+                 return true;
+             }
+             else {
+                 return false;
+             }
+         }
+
+    </script>
+    <script language="Javascript" type="text/javascript">
+        function Yuva(fld, evt) {
+            if (isEnterKey(evt)) {
+                event.keyCode = 0;
+                event.returnValue = false;
+                alert("Key Disabled");
+            }
+            else {
+                return true;
+            }
+        }
+    </script>
+    <style type="text/css">
+        .PnlDesign {
+            border: solid 1px #000000;
+            height: 150px;
+            width: 300px;
+            overflow-y: scroll;
+            background-color: #EAEAEA;
+            font-size: 15px;
+            font-family: Arial;
+        }
+
+        .txtbox {
+            background-image: url(/cmabd/images/drpdwn.png);
+            background-position: right center;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            cursor: hand;
+        }
+    </style>
+    <script type="text/javascript">
+        //function IsAllowAlpha(evt) {
+        //    var keyCode = (evt.which) ? evt.which : evt.keyCode
+        //    if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 122) && keyCode != 32 && keyCode != 46 && keyCode >= 35 && keyCode > 37 && keyCode > 39)
+        //        //if ((keyCode >= 65 || keyCode <= 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32 && keyCode >= 35)
+        //        //if (!((keyCode == 8) || (keyCode == 32) || (keyCode == 46) || (keyCode >= 35 && keyCode <= 40) || (keyCode >= 65 && keyCode <= 90)))
+        //        //(keyCode == 37 || keyCode == 39)
+        //        return false;
+        //    return true;
+        //}
+
+        function OnlyAmount(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46 && charCode != 37 && charCode != 39) {
+                return false;
+            }
+            return true;
+        }
+        function IsNumber(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 8 && charCode != 9 && charCode != 32) {
+                return false;
+            }
+            //charCode != 46
+            return true;
+
+        }
+
+        function IsDecimalBD(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46 && charCode != 37 && charCode != 39) {
+                return false;
+            }
+            return true;
+        }
+
+        function IsAllowAlphaInt(evt) {
+            //  PageMethods.SetScrollLockKey(false);
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && (charCode < 48 || charCode > 57) && charCode != 46 && charCode != 37 && charCode != 39 && charCode != 8 && charCode != 9 && charCode != 32) {
+                return false;
+            }
+            //   PageMethods.SetScrollLockKey(false);
+            return true;
+        }
+
+        function IsAllowAlpha(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode;
+            if (evt.charCode > 123) {
+                //  window.event.keyCode = 0;
+                alert("Scroll lock is on.First off scroll lock and then type in english");
+                return false;
+            }
+
+            if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode != 8 && charCode != 9 && charCode != 32) {
+                return false;
+            }
+            return true;
+
+        }
+
+
+        //function IsAlphaNumeric(evt) {
+        //    var charCode = (evt.which) ? evt.which : event.keyCode;
+        //    if (charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode != 46 && charCode != 8 && charCode != 9 && charCode != 32) {
+        //        if (charCode == 43 || charCode == 45 || charCode == 44) return true;
+        ////        return false;
+        //    }
+        //    //charCode != 46
+        //    return true;
+        //}
+
+        function IsAlphaNumeric(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode != 46 && charCode != 8 && charCode != 9 && charCode != 32 && charCode != 47) {
+                if (charCode == 45 || charCode == 44) return true;
+                return false;
+            }
+            //charCode != 46
+            return true;
+        }
+
+
+        function IsDecimal(eventObj) {
+            var keycode;
+            if (eventObj.keyCode) //For IE
+                keycode = eventObj.keyCode;
+            else if (eventObj.Which)
+                keycode = eventObj.Which;  // For FireFox
+            else
+                keycode = eventObj.charCode; // Other Browser
+
+            if (keycode != 8) //if the key is the backspace key
+            {
+                if (keycode < 46 || keycode > 57 || (keycode == 47) || (keycode == 48)) //if not a number
+                    return false; // disable key press
+                else
+                    return true; // enable key press
+            }
+        }
+
+        function IsEmail(id) {
+            var email = document.getElementById(id);
+            var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+            if (!filter.test(email.value)) {
+                document.getElementById(id).focus();
+                $('.fld1-error').html('Invalid email address');
+                $('#PageContent_txtBirthPlaceTypeName').css('border-color', 'red');
+                return false;
+            }
+        }
+
+        function NumericValidation(eventObj) {
+            var keycode;
+            //alert(eventObj.keyCode);
+            if (eventObj.keyCode) //For IE
+                keycode = eventObj.keyCode;
+            else if (eventObj.Which)
+                keycode = eventObj.Which;  // For FireFox
+            else
+                keycode = eventObj.charCode; // Other Browser
+
+            if (keycode != 8) //if the key is the backspace key
+            {
+                if (keycode < 48 || keycode > 57) //if not a number
+                    return false; // disable key press
+                else
+                    return true; // enable key press
+            }
+        }
+
+        //function allowOnlyNumber(evt) {
+        //    var chCode = evt.keyCode ? evt.keyCode : evt.charCode ? evt.charCode : evt.which;
+        //    if (chCode >= 48 && chCode <= 57 || chCode == 46) {
+        //        return true;
+        //    }
+        //    else
+        //        return false;
+        //}
+
+        //function allowOnlyNumber(evt) {
+        //    evt = (evt) ? evt : window.event;
+        //    var charCode = (evt.which) ? evt.which : evt.keyCode;
+        //    if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46 && charCode != 37 && charCode != 39 && charCode != 47 && charCode != 45) {
+        //        return false;
+        //    }
+        //    return true;
+        //}
+
+        function allowOnlyNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+
+    </script>
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Armata"><style type="text/css" data-creator="amazingcarouselcreator">#html5-text {color:#333; font-size:16px; font-family:Armata,sans-serif,Arial; overflow:hidden; }.html5-error {text-align:center; color:#ff0000; font-size:14px; font-family:Arial, sans-serif;}</style></head>
+<body>
+    <form method="post" action="./" id="ctl01">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTE3MzkxMjMxNjYPZBYCZg8PFgQeD19fQW50aVhzcmZUb2tlbgUgMDc3NThmYWE1MzUxNGJhNWJhYmRjOGIyNjQ1OTViNzEeEl9fQW50aVhzcmZVc2VyTmFtZWVkFgICAw9kFgICAw9kFgQCAg9kFgICAw9kFgICAQ8PZBYCHgR0eXBlBQhwYXNzd29yZGQCBQ8PFgIeBFRleHQFJVRvdGFsIG5vLm9mIFJlZ2lzdGVyZWQgdXNlcnMgOiA2NzA4ODdkZGTB8ZsCcjjrRKFzBXDXjD0eghC/Ww==">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['ctl01'];
+if (!theForm) {
+    theForm = document.ctl01;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=zQoiTf-a8dSjZDmxKIl0UM41B5v0EM7-DrQgBMD5yZmynAAXItYgQNGgEx03DCllzJomGJ3lqzngFeeHhOyO7_qFb541&amp;t=637454266939909757" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=xN_JgtuaV4_T_1hpnSsZBdeFfUmsbXduQEZc4wc9C55_3ydIKC25D0KMzq_5UdiHCmbpwu0kNfC0GC8oryWY7qGD2khqu7UYF5HGaqfG4-7tWFp5btQDm68NJhkAWOMkHg6Wx_bCvk-u2mBg3NDjZwiHzzc1&amp;t=2fe674eb" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=jy8Ol3fYRMyB7rzYmApqkJkLVEOoENRhHGLVq210XIYY4hBECles0_SC6LWr_rM0LNBElubyAuxviPS7mRylHdzW3YycMgmdW7ePraWYPlb85wzbvuuEPll1C4gkQ-GrljUjsCwRec4yvajs6pUP8L1_R0JXGQ5birrQItnS2QzWh05A0&amp;t=2fe674eb" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="F0C7EF03">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAWeDlSbJne9ywIX+9DGGtDQiLHifDikjUHrEbQh1FxjlFLwta6671bI5+MJJ1l7XPwo4Tty6YwLnji6guscZglH6hwY1b7q9DT5vMJCV2fja5CEPUvrlobDSxhLY7kTYJg5/JX9">
+</div>
+    <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ctl15', 'ctl01', [], [], [], 90, 'ctl00');
+//]]>
+</script>
+
+
+  
+ 
+    <link href="assets/global/css/responsivestyle.css" rel="stylesheet">
+
+    <script type="text/javascript">
+        function clearpwd() {
+            try {
+                var pwd = document.getElementById('PageContent_txtpassword');
+                if (pwd) { pwd.readOnly = false; pwd.value = ''; try { pwd.focus(); } catch (e) { } }
+            } catch (e) { }
+        }
+
+        function submitFormOnEnter(evt, btnId) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode === 13) {
+                var btnObj = document.getElementById(btnId);
+                if (btnObj) btnObj.click();
+                return false;
+            }
+            return true;
+        }
+
+        function AlphaIntonly(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 32 &&
+                (charCode < 48 || charCode > 57) &&
+                (charCode < 65 || charCode > 90) &&
+                (charCode < 97 || charCode > 122) &&
+                charCode != 35 && charCode != 36 && charCode != 37 && charCode != 39 && charCode != 127) {
+                return false;
+            }
+            return true;
+        }
+
+        // Small helper: focus OTP textbox when OTP panel is shown server-side
+        function focusOtpIfVisible() {
+            try {
+                var otpPanel = document.getElementById('PageContent_pnlOtp');
+                var otpBox = document.getElementById('PageContent_txtOTP');
+                if (otpPanel && otpBox) {
+                    var style = window.getComputedStyle ? window.getComputedStyle(otpPanel) : otpPanel.style;
+                    var visible = style && style.display && style.display !== "none";
+                    if (!visible) visible = !!(otpPanel.offsetParent || otpPanel.offsetWidth || otpPanel.offsetHeight);
+                    if (visible) {
+                        try { otpBox.focus(); } catch (e) { }
+                    }
+                }
+            } catch (e) { }
+        }
+
+        if (window.addEventListener) window.addEventListener('load', focusOtpIfVisible, false);
+        else window.onload = focusOtpIfVisible;
+    </script>
+
+    <style type="text/css">
+        .blink_new { font-size: 25px; }
+        .blink_new table td { color: blue; line-height: 25px; }
+        .form-group { margin-left: 0px !important; margin-right: 0px !important; }
+        .lblinfo { font-weight: bold; }
+        .smalltext { font-size: 12px; color: #666; }
+        .otp-panel { margin-top:10px; padding:10px; border:1px solid #eee; background:#fafafa; }
+    </style>
+
+    <div class="container-fluid">
+        <div class="row">&nbsp;</div>
+
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div class="col-md-6 col-sm-6 caption-tamil">மழைநீர் சேமிப்போம்</div>
+                <div class="col-md-6 col-sm-6 caption-tamil">மழைநீர் உயிர்நீர்</div>
+
+                <marquee direction="left" class="blink_new" onmouseover="this.stop()" onmouseout="this.start()" scrolldelay="150" style="color: blue;">
+                    
+                </marquee>
+
+                <div class="col-md-12 col-sm-12 imgpadding">
+                    <img src="./images/Login-Page.png" class="img-responsive center-block">
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-6">
+                <div class="container login-bg">
+                    <div class="com-sm-12 col-lg-12 ">
+                        <img src="img/logo/logo-alt.png" class="img-responsive center-block" alt="CMA">
+                    </div>
+                    <div class="com-sm-12 col-lg-12 text-center">
+                        <h4 class="cma">Commissionerate of Municipal Administration</h4>
+                        <h5 class="cmat">நகராட்சி நிர்வாக ஆணையரகம் </h5>
+                        <h6 class="cmacap">Enabling ULBs for better services</h6>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6" style="border-right: 1px solid #ebebeb;">
+                        <div class="list-group text-left">
+                            <a class="list-group-item active">Quick Links <span class="glyphicon glyphicon-log-in"></span></a>
+                            <a class="list-group-item border-0" href="NewUserRegistration.aspx"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;New User Registration</a>
+                            <a class="list-group-item border-0" href="ActivationCode.aspx"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;New User Activation Code</a>
+                            <a class="list-group-item border-0" href="ForgetPassword.aspx"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Forgot Password?</a>
+                            <a href="IntegratedPaymentNew1.aspx?res=home" id="PageContent_iplink" class="list-group-item border-0"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Quick Payment</a>
+                            <a class="list-group-item border-0" id="dashclick" onclick="javascript:changeclass()" href="DashboardReport.aspx"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Dashboard</a>
+                            <a class="list-group-item border-0" href="WithOutLogin_ServiceRequestStatus.aspx" target="_self"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Service Request Status Verification (For Citizen)</a>
+                            <a class="list-group-item border-0" href="WithOutLogin_PaymentInformationStatus.aspx" target="_self"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Payment Verification Status For Dept.Use</a>
+                            <a class="list-group-item border-0" href="WithOutLogin_DownloadCertificate.aspx" target="_self"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Download Certificate</a>
+                            <a class="list-group-item border-0" href="WithOutLogin_PTLegacy.aspx" target="_self"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Assessee History</a>
+                            <a class="list-group-item border-0" href="Waterquality.aspx" target="_self"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Water Quality</a>
+                            <a class="list-group-item border-0" href="WithOutLogin_Help.aspx" target="_self"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;Help</a>
+                            <a class="list-group-item border-0" href="WithOutLogin_WhatsNew.aspx" target="_self"><span class="glyphicon glyphicon-hand-right"></span>&nbsp;What is New</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="list-group text-left">
+                            <a class="list-group-item active">Login <span class="glyphicon glyphicon-log-in"></span></a>
+                        </div>
+
+                        <div class="form-horizontal" role="form">
+                            <!-- LOGIN PANEL -->
+                            <div id="PageContent_pnlLogin">
+	
+                                <div class="form-group">
+                                    <label class="col-lg-12">Mobile No or Email<span class="require"> *</span></label>
+                                    <div class="col-lg-12">
+                                        <input name="ctl00$PageContent$txtlogin" type="text" maxlength="40" id="PageContent_txtlogin" tabindex="1" class="form-control log-focus" autocomplete="Off">
+                                    </div>
+                                </div>
+
+                                <!-- password -->
+                                <div id="PageContent_pnlPassword">
+		
+                                    <div class="form-group">
+                                        <label class="col-lg-12 control-label log_label">Password <span class="require">*</span></label>
+                                        <div class="col-lg-12">
+                                            <input name="ctl00$PageContent$txtpassword" type="password" maxlength="40" id="PageContent_txtpassword" tabindex="2" class="form-control log-focus" onfocus="clearpwd()" autocomplete="Off">
+                                        </div>
+                                    </div>
+                                
+	</div>
+
+                                <div class="form-group">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom: -10px;">
+                                            <input type="submit" name="ctl00$PageContent$btnSubmit" value="Login" id="PageContent_btnSubmit" tabindex="4" class="btn green button-submit button-submit-bg_c">
+                                            <input type="submit" name="ctl00$PageContent$btnClose" value="Reset" id="PageContent_btnClose" tabindex="5" class="btn green button-submit button-submit-bg_c">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <span id="PageContent_lblseccode"></span>
+                                    <span id="PageContent_lblmsg" style="color:Red;"></span>
+                                    <span id="PageContent_lblmsgGreen" style="color:Green;"></span>
+                                </div>
+                            
+</div>
+
+                            <!-- OTP PANEL (same page) -->
+                            
+
+                            <!-- LOGGED-IN MESSAGE (shows on same page when OTP verified) -->
+                            
+
+                            <div class="com-sm-12 col-lg-12 text-center citi_head_left" style="margin-top:10px;">
+                                This is the end to end online service,No physical touch point required
+                            </div>
+                        </div>
+
+                        <span id="PageContent_lblreguser" style="font-weight: bold;">Total no.of Registered users : 670887</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">hi</div>
+    </div>
+
+    <script type="text/javascript">
+        (function () {
+            function parseIso(s) {
+                if (!s) return null;
+                try {
+                    var d = new Date(s);
+                    return isNaN(d.getTime()) ? null : d;
+                } catch (e) { return null; }
+            }
+            function formatSeconds(sec) { if (sec < 0) sec = 0; var m = Math.floor(sec / 60); var s = Math.floor(sec % 60); return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s); }
+
+            var hfResend = document.getElementById('PageContent_hfResendTimestamp');
+            var hfExpiry = document.getElementById('PageContent_hfOTPExpiry');
+            var btnResend = document.getElementById('PageContent_btnResend');
+            var lblCountdown = document.getElementById('PageContent_lblCountdown');
+            var lblResendTimer = document.getElementById('PageContent_lblResendTimer');
+
+            var resendTs = hfResend && hfResend.value ? parseIso(hfResend.value) : null;
+            var expiryTs = hfExpiry && hfExpiry.value ? parseIso(hfExpiry.value) : null;
+            var RESEND_COOLDOWN_SECONDS = 60;
+
+            function updateUI() {
+                var now = new Date();
+
+                if (resendTs) {
+                    var secondsSince = Math.floor((now - resendTs) / 1000);
+                    var remainingResend = RESEND_COOLDOWN_SECONDS - secondsSince;
+                    if (remainingResend > 0) {
+                        if (btnResend) btnResend.disabled = true;
+                        if (lblResendTimer) lblResendTimer.innerText = "Resend in " + formatSeconds(remainingResend);
+                    } else {
+                        if (btnResend) btnResend.disabled = false;
+                        if (lblResendTimer) lblResendTimer.innerText = "";
+                    }
+                } else {
+                    if (btnResend) btnResend.disabled = false;
+                    if (lblResendTimer) lblResendTimer.innerText = "";
+                }
+
+                if (expiryTs) {
+                    var remaining = Math.ceil((expiryTs - now) / 1000.0);
+                    if (remaining > 0) {
+                        if (lblCountdown) lblCountdown.innerText = "OTP expires in " + formatSeconds(remaining);
+                    } else {
+                        if (lblCountdown) lblCountdown.innerText = "OTP expired";
+                        if (btnResend) btnResend.disabled = false;
+                        expiryTs = null;
+                        if (hfExpiry) hfExpiry.value = "";
+                    }
+                } else {
+                    if (lblCountdown) lblCountdown.innerText = "";
+                }
+            }
+
+            updateUI();
+            setInterval(updateUI, 1000);
+        })();
+    </script>
+
+    <script src="assets/global/plugins/jquery-3.6.1.min.js"></script>
+    
+    <script src="assets/global/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+    <script src="assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>      
+    <script src="assets/frontend/layout/scripts/back-to-top.js" type="text/javascript"></script>
+    <!-- END CORE PLUGINS -->
+ 
+    <!-- BEGIN PAGE LEVEL JAVASCRIPTS (REQUIRED ONLY FOR CURRENT PAGE) -->
+    <script src="assets/global/plugins/fancybox/source/jquery.fancybox.pack.js" type="text/javascript"></script><!-- pop up -->
+
+    <script src="assets/frontend/layout/scripts/layout.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            Layout.init();    
+        });
+    </script>
+    <!-- END PAGE LEVEL JAVASCRIPTS -->
+	    <!-- Insert to your webpage before the </head> -->
+    <script src="carouselengine/jquery.js"></script>
+    <script src="carouselengine/amazingcarousel.js"></script>
+    <link rel="stylesheet" type="text/css" href="carouselengine/initcarousel-1.css">
+    <script src="carouselengine/initcarousel-1.js"></script>
+          <!-- Date Picker -->
+        <script src="assets/global/scripts/jquery-ui.js"></script>
+
+           <script language="Javascript" type="text/javascript">
+               $(document).keydown(function (event) {
+                   if (event.keyCode == 123) { // Prevent F12
+                       return false;
+                   } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) { // Prevent Ctrl+Shift+I        
+                       return false;
+                   }
+               });
+
+           </script>
+
+   
+    </form>
+
+
+<div id="html5-lightbox" style="display: none; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 9999999; position: fixed;"><div id="html5-lightbox-overlay" style="display:block;position:absolute;top:0px;left:0px;width:100%;height:100%;background-color:#000000;opacity:0.9;filter:alpha(opacity=90);"></div><div id="html5-lightbox-box" style="display:block;position:relative;margin:0px auto;"><div id="html5-elem-box" style="display:block;position:relative;margin:0px auto;text-align:center;"><div id="html5-elem-wrap" style="display:block;position:relative;margin:0px auto;text-align:center;background-color:#ffffff;"><div id="html5-loading" style="display:none;position:absolute;top:0px;left:0px;text-align:center;width:100%;height:100%;background:url(&quot;https://tnurbanepay.tn.gov.in/carouselengine/lightbox-loading.gif&quot;) no-repeat center center;"></div><div id="html5-error" class="html5-error" style="display:none;position:absolute;padding:8px;text-align:center;width:280px;height:48px;">The requested content cannot be loaded.<br>Please try again later.</div><div id="html5-image" style="display:none;position:absolute;top:0px;left:0px;padding:8px;text-align:center;"></div><div id="html5-next" style="display:none;cursor:pointer;position:absolute;right:8px;top:40%;"><img src="https://tnurbanepay.tn.gov.in/carouselengine/lightbox-next.png"></div><div id="html5-prev" style="display:none;cursor:pointer;position:absolute;left:8px;top:40%;"><img src="https://tnurbanepay.tn.gov.in/carouselengine/lightbox-prev.png"></div></div></div><div id="html5-watermark" style="display:none;position:absolute;left:10px;top:10px;"></div><div id="html5-elem-data-box" style="display: none; overflow: hidden; position: relative; width: 100%; margin: 0px auto; height: 48px; background-color: rgb(255, 255, 255);"><div id="html5-text" style="display: block; overflow: hidden; float: left; margin-left: 8px;"></div><div id="html5-close" style="display:block;cursor:pointer;float:right;margin-right:8px;"><img src="https://tnurbanepay.tn.gov.in/carouselengine/lightbox-close.png"></div></div></div></div><div id="topcontrol" title="Scroll Back to Top" style="position: fixed; bottom: 10px; right: 10px; opacity: 0; cursor: pointer;"><img src="assets/frontend/layout/img/up.png" style="width:40px; height:40px"></div></body></html>
