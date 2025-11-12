@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greeting Form - Social Eagle Batch-3</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a touch of character */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Permanent+Marker&display=swap');
+        
+        .font-marker {
+            font-family: 'Permanent Marker', cursive;
+        }
+
+        /* Define the background image (simulating bkgrnd.png) */
+        .app-bg {
+            background-image: url('https://images.unsplash.com/photo-1549492147-3841a1d13f0a?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            /* Add a subtle dark inset shadow overlay for better text contrast */
+            box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.1); 
+        }
+
+        /* Custom styling for the slider track (similar to ttk.Scale) */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #d1e7c5;
+            border-radius: 5px;
+            outline: none;
+            transition: opacity .2s;
+        }
+
+        /* Custom styling for the slider thumb */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #43a047;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary-dark': '#1b5e20',
+                        'primary-light': '#43a047',
+                        'form-bg': '#f1f8e9',
+                        'highlight': '#6a1b9a',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col font-sans app-bg">
+
+    <!-- Header Frame -->
+    <header class="bg-primary-dark p-4 shadow-xl">
+        <h1 class="text-white text-xl font-bold text-center">
+            🌿 Greetings from Social Eagle Batch-3 🌿
+        </h1>
+    </header>
+    
+    <!-- Marquee Text - Enhanced with light color and prominent font -->
+    <div class="bg-primary-dark p-2 text-center border-b-2 border-primary-light">
+        <marquee direction="left" scrollamount="8">
+            <span class="text-xl font-marker tracking-widest text-yellow-300">
+                ⭐ Welcome to Day 1 Python Challenge ⭐
+            </span>
+        </marquee>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        
+        <!-- Center Form Frame -->
+        <div id="center-frame" class="bg-form-bg p-8 md:p-10 rounded-xl shadow-2xl border-4 border-primary-light max-w-lg w-full">
+            
+            <!-- Fancy Title -->
+            <h2 class="text-highlight text-3xl font-marker text-center mb-6">
+                🌸 Enter Your Details 🌸
+            </h2>
+
+            <!-- Input Form -->
+            <form id="greeting-form" class="space-y-4">
+                
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                    <label for="first_name" class="text-lg font-bold text-primary-dark mb-1 sm:mb-0">First Name:</label>
+                    <input type="text" id="first_name" required class="border border-gray-300 p-2 rounded-lg w-full sm:w-64 focus:ring-primary-light focus:border-primary-light transition">
+                </div>
+                
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                    <label for="last_name" class="text-lg font-bold text-primary-dark mb-1 sm:mb-0">Last Name:</label>
+                    <input type="text" id="last_name" required class="border border-gray-300 p-2 rounded-lg w-full sm:w-64 focus:ring-primary-light focus:border-primary-light transition">
+                </div>
+
+                <!-- Age Slider -->
+                <div class="pt-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-lg font-bold text-primary-dark">Select Age:</label>
+                        <span id="age-value" class="text-primary-dark font-semibold">Age: 25</span>
+                    </div>
+                    <input type="range" id="age_slider" min="5" max="100" value="25" class="w-full">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full mt-6 py-3 px-4 text-white text-lg font-bold rounded-xl bg-primary-light hover:bg-primary-dark transition duration-200 shadow-md hover:shadow-lg">
+                    Show Greeting ✨
+                </button>
+            </form>
+
+            <!-- Greeting Result Area -->
+            <div id="greeting-result" class="mt-8 pt-4 border-t border-gray-300 min-h-[100px] flex items-center justify-center">
+                <!-- Result will be displayed here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Frame -->
+    <footer class="bg-primary-dark p-3 text-center text-sm">
+        <p class="text-white text-opacity-80 italic">© Copyrights by Selva - <span id="current-year"></span></p>
+    </footer>
+
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        const firstNameInput = document.getElementById('first_name');
+        const lastNameInput = document.getElementById('last_name');
+        const ageSlider = document.getElementById('age_slider');
+        const ageValueSpan = document.getElementById('age-value');
+        const form = document.getElementById('greeting-form');
+        const resultDiv = document.getElementById('greeting-result');
+
+        // --- Core Functions ---
+
+        /**
+         * Returns a time-of-day specific greeting.
+         */
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) {
+                return "Good Morning";
+            } else if (hour >= 12 && hour < 18) {
+                return "Good Afternoon";
+            } else {
+                return "Good Night";
+            }
+        }
+
+        /**
+         * Updates the age display next to the slider.
+         */
+        ageSlider.addEventListener('input', (e) => {
+            ageValueSpan.textContent = `Age: ${e.target.value}`;
+        });
+
+        /**
+         * Handles form submission and displays the rich-text greeting.
+         */
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const first = firstNameInput.value.trim();
+            const last = lastNameInput.value.trim();
+            const age = ageSlider.value;
+
+            // Input validation
+            if (!first || !last) {
+                resultDiv.innerHTML = '<p class="text-red-600 font-bold">⚠️ Please enter both first and last name!</p>';
+                return;
+            }
+
+            const greeting = getGreeting();
+            const fullNameLine = `${first} ${last}`.toUpperCase(); // Full name in CAPITALS
+            const ageLine = `You are ${age} years old.`;
+            const greetingLine = `${greeting}!`;
+
+            // Use a flexible HTML structure for rich formatting
+            resultDiv.innerHTML = `
+                <div class="text-center space-y-3 p-4 bg-form-bg">
+                    <p class="text-highlight text-3xl font-marker font-bold leading-tight">${fullNameLine}</p>
+                    <p class="text-primary-dark text-lg">${ageLine}</p>
+                    <p class="text-primary-light text-xl italic">${greetingLine}</p>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
