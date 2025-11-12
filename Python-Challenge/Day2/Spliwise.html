@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-M">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TourSplit - Split your expenses</title>
+    <!-- 1. Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <!-- 2. Custom Styles -->
+    <style>
+        body {
+            /* Attractive gradient background */
+            background-image: linear-gradient(to top right, #1e3a8a, #4f46e5, #7c3aed);
+        }
+        /* Custom scrollbar for aesthetics */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a8a29e;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #78716c;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen p-4 sm:p-8 flex items-center justify-center">
+
+    <div class="w-full max-w-6xl mx-auto">
+        <!-- Main Title -->
+        <h1 class="text-3xl sm:text-5xl font-bold text-white text-center mb-6 shadow-text" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+            Tour Split Expense Manager
+        </h1>
+
+        <!-- 3. Friend Setup Section (Initially Visible) -->
+        <section id="friends-setup-section" class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-8 transition-all duration-500">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">Create Your Group</h2>
+            <div class="max-w-md mx-auto">
+                <div class="flex flex-col sm:flex-row gap-3 mb-4">
+                    <input type="text" id="friend-name-input" placeholder="Enter a friend's name" class="flex-grow w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all" aria-label="Friend's name">
+                    <button id="add-friend-btn" class="w-full sm:w-auto bg-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-purple-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                        Add Friend
+                    </button>
+                </div>
+                <ul id="friends-list" class="space-y-2 mb-6 min-h-[50px] bg-gray-50 p-4 rounded-lg border">
+                    <!-- Friend names will be added here by JS -->
+                </ul>
+                <button id="start-app-btn" class_disabled="bg-gray-400 cursor-not-allowed" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none" disabled>
+                    Start Splitting (Need 2+ friends)
+                </button>
+                <p id="friend-error" class="text-red-500 text-sm mt-2 text-center h-4"></p>
+            </div>
+        </section>
+
+        <!-- 4. Main App Section (Initially Hidden) -->
+        <section id="main-app-section" class="hidden bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-8 transition-all duration-500">
+            
+            <!-- 4a. Add Expense Form -->
+            <div class="mb-8 border-b border-gray-200 pb-8">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">Add a New Expense</h2>
+                <form id="expense-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <!-- ADDED: Expense Description Input -->
+                    <div>
+                        <label for="expense-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <input type="text" id="expense-description" placeholder="e.g., Dinner, Groceries" class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none" required>
+                    </div>
+                    <!-- CURRENCY CHANGE: Amount label to Rupee -->
+                    <div>
+                        <label for="expense-amount" class="block text-sm font-medium text-gray-700 mb-1">Amount (₹)</label>
+                        <input type="number" id="expense-amount" placeholder="0.00" min="0.01" step="0.01" class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none" required>
+                    </div>
+                    <div>
+                        <label for="expense-payer" class="block text-sm font-medium text-gray-700 mb-1">Paid by</label>
+                        <select id="expense-payer" class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white" required>
+                            <!-- Payer options will be added here by JS -->
+                        </select>
+                    </div>
+                    <div class="md:col-span-3 flex justify-end items-center gap-4">
+                         <p class="text-sm text-gray-600 italic">Note: Expenses are split equally among all members.</p>
+                        <button type="submit" class="w-full sm:w-auto bg-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-purple-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                            Add Expense
+                        </button>
+                    </div>
+                </form>
+                 <p id="expense-error" class="text-red-500 text-sm mt-2 text-right h-4"></p>
+            </div>
+
+            <!-- 4b. Dashboard (Expenses, Balances, Settlements) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+                
+                <!-- Column 1: Expenses List -->
+                <div class="lg:col-span-1 bg-gray-50 p-5 rounded-xl border shadow-inner">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">Expense History</h3>
+                    <ul id="expenses-list" class="space-y-3 max-h-80 overflow-y-auto pr-2">
+                        <li id="no-expenses-msg" class="text-gray-500 italic">No expenses added yet.</li>
+                    </ul>
+                </div>
+
+                <!-- Column 2: Balances -->
+                <div class="lg:col-span-1 bg-gray-50 p-5 rounded-xl border shadow-inner">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">Current Balances</h3>
+                    <ul id="balances-summary" class="space-y-3">
+                        <!-- Balances will be added here by JS -->
+                    </ul>
+                </div>
+
+                <!-- Column 3: Settlements -->
+                <div class="lg:col-span-1 bg-gray-50 p-5 rounded-xl border shadow-inner">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">How to Settle Up</h3>
+                    <ul id="settlements-output" class="space-y-3">
+                         <li id="no-settlements-msg" class="text-gray-500 italic">Everyone is settled up!</li>
+                    </ul>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <!-- 5. JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- STATE ---
+            let friends = [];
+            let expenses = []; // { description, amount, payer }
+            let balances = {}; // { friendName: balanceAmount }
+
+            // --- SELECTORS ---
+            const friendsSetupSection = document.getElementById('friends-setup-section');
+            const mainAppSection = document.getElementById('main-app-section');
+            
+            const friendNameInput = document.getElementById('friend-name-input');
+            const addFriendBtn = document.getElementById('add-friend-btn');
+            const friendsList = document.getElementById('friends-list');
+            const startAppBtn = document.getElementById('start-app-btn');
+            const friendError = document.getElementById('friend-error');
+
+            const expenseForm = document.getElementById('expense-form');
+            const expenseDescription = document.getElementById('expense-description');
+            const expenseAmount = document.getElementById('expense-amount');
+            const expensePayer = document.getElementById('expense-payer');
+            const expenseError = document.getElementById('expense-error');
+            
+            const expensesList = document.getElementById('expenses-list');
+            const noExpensesMsg = document.getElementById('no-expenses-msg');
+            const balancesSummary = document.getElementById('balances-summary');
+            const settlementsOutput = document.getElementById('settlements-output');
+            const noSettlementsMsg = document.getElementById('no-settlements-msg');
+
+            // --- FUNCTIONS ---
+
+            /**
+             * Shows a temporary error message
+             */
+            function showError(element, message) {
+                element.textContent = message;
+                setTimeout(() => { element.textContent = ''; }, 3000);
+            }
+
+            /**
+             * Renders the current list of friends
+             */
+            function renderFriendsList() {
+                friendsList.innerHTML = ''; // Clear list
+                if (friends.length === 0) {
+                     friendsList.innerHTML = '<li class="text-gray-500 italic text-center">No friends added yet.</li>';
+                }
+                friends.forEach((friend, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'flex justify-between items-center bg-white p-3 rounded-lg shadow-sm border';
+                    li.innerHTML = `
+                        <span class="text-gray-800">${friend}</span>
+                        <button data-index="${index}" class="remove-friend-btn text-red-500 hover:text-red-700 font-medium text-sm">&times; Remove</button>
+                    `;
+                    friendsList.appendChild(li);
+                });
+
+                // Update start button state
+                if (friends.length >= 2) {
+                    startAppBtn.disabled = false;
+                    startAppBtn.textContent = `Start Splitting (${friends.length} friends)`;
+                } else {
+                    startAppBtn.disabled = true;
+                    startAppBtn.textContent = 'Start Splitting (Need 2+ friends)';
+                }
+            }
+            
+            /**
+             * Populates the "Paid by" dropdown menu
+             */
+            function populatePayerDropdown() {
+                expensePayer.innerHTML = '';
+                friends.forEach(friend => {
+                    const option = document.createElement('option');
+                    option.value = friend;
+                    option.textContent = friend;
+                    expensePayer.appendChild(option);
+                });
+            }
+
+            /**
+             * Renders the list of recorded expenses
+             * CURRENCY CHANGE: Updated to use ₹
+             */
+            function renderExpensesList() {
+                if (expenses.length === 0) {
+                    noExpensesMsg.classList.remove('hidden');
+                    return;
+                }
+                noExpensesMsg.classList.add('hidden');
+                expensesList.innerHTML = ''; // Clear list
+                
+                expenses.slice().reverse().forEach(exp => { // Show newest first
+                    const li = document.createElement('li');
+                    li.className = 'bg-white p-3 rounded-lg shadow-sm border';
+                    li.innerHTML = `
+                        <p class="font-medium text-gray-800">${exp.description}</p>
+                        <p class="text-sm text-gray-600">${exp.payer} paid <span class="font-bold text-green-700">₹${exp.amount.toFixed(2)}</span></p>
+                    `;
+                    expensesList.appendChild(li);
+                });
+            }
+
+            /**
+             * Recalculates and renders the balance for each friend
+             * CURRENCY CHANGE: Updated to use ₹
+             */
+            function updateAndRenderBalances() {
+                // 1. Reset balances
+                balances = {};
+                friends.forEach(f => { balances[f] = 0.0; });
+
+                // 2. Recalculate from all expenses
+                const numFriends = friends.length;
+                if (numFriends === 0) return;
+
+                expenses.forEach(exp => {
+                    const share = exp.amount / numFriends;
+                    
+                    // Payer is "owed" the full amount
+                    balances[exp.payer] += exp.amount;
+                    
+                    // Everyone "owes" their share
+                    friends.forEach(f => {
+                        balances[f] -= share;
+                    });
+                });
+                
+                // 3. Render balances
+                balancesSummary.innerHTML = '';
+                friends.forEach(friend => {
+                    const balance = balances[friend];
+                    const li = document.createElement('li');
+                    li.className = 'flex justify-between items-center bg-white p-3 rounded-lg shadow-sm border';
+                    
+                    let balanceText;
+                    if (balance > 0.01) {
+                        balanceText = `<span class="font-medium text-green-600">is owed ₹${balance.toFixed(2)}</span>`;
+                    } else if (balance < -0.01) {
+                        balanceText = `<span class="font-medium text-red-600">owes ₹${(-balance).toFixed(2)}</span>`;
+                    } else {
+                        balanceText = `<span class="font-medium text-gray-500">is settled</span>`;
+                    }
+                    
+                    li.innerHTML = `
+                        <span class="text-gray-800">${friend}</span>
+                        ${balanceText}
+                    `;
+                    balancesSummary.appendChild(li);
+                });
+            }
+
+            /**
+             * JavaScript version of the Python calculate_settlements function
+             * CURRENCY CHANGE: Updated to use ₹
+             */
+            function calculateAndRenderSettlements() {
+                const creditors = [];
+                const debtors = [];
+                
+                // Separate into creditors (positive balance) and debtors (negative balance)
+                for (const friend in balances) {
+                    const balance = balances[friend];
+                    if (balance > 0.01) {
+                        creditors.push({ name: friend, amount: balance });
+                    } else if (balance < -0.01) {
+                        debtors.push({ name: friend, amount: -balance }); // Store as positive amount owed
+                    }
+                }
+
+                const transactions = [];
+
+                // Algorithm to find simplest payments
+                while (debtors.length > 0 && creditors.length > 0) {
+                    // Sort by amount, largest first
+                    debtors.sort((a, b) => b.amount - a.amount);
+                    creditors.sort((a, b) => b.amount - a.amount);
+
+                    const debtor = debtors[0];
+                    const creditor = creditors[0];
+                    
+                    const paymentAmount = Math.min(debtor.amount, creditor.amount);
+                    
+                    transactions.push({
+                        from: debtor.name,
+                        to: creditor.name,
+                        amount: paymentAmount
+                    });
+
+                    debtor.amount -= paymentAmount;
+                    creditor.amount -= paymentAmount;
+
+                    if (debtor.amount < 0.01) debtors.shift(); // Remove settled debtor
+                    if (creditor.amount < 0.01) creditors.shift(); // Remove settled creditor
+                }
+
+                // Render transactions
+                if (transactions.length === 0) {
+                    noSettlementsMsg.classList.remove('hidden');
+                    settlementsOutput.innerHTML = '';
+                    return;
+                } 
+                
+                noSettlementsMsg.classList.add('hidden');
+                settlementsOutput.innerHTML = ''; // Clear list
+                
+                transactions.forEach(trx => {
+                    const li = document.createElement('li');
+                    li.className = 'bg-white p-3 rounded-lg shadow-sm border';
+                    li.innerHTML = `
+                        <span class="font-medium text-red-600">${trx.from}</span>
+                        pays
+                        <span class="font-medium text-green-600">${trx.to}</span>
+                        <span class="font-bold text-gray-800">₹${trx.amount.toFixed(2)}</span>
+                    `;
+                    settlementsOutput.appendChild(li);
+                });
+            }
+            
+            /**
+             * Updates all sections of the UI based on the current state
+             */
+            function updateAllUI() {
+                renderExpensesList();
+                updateAndRenderBalances();
+                calculateAndRenderSettlements();
+            }
+
+            // --- EVENT LISTENERS ---
+
+            // Add Friend
+            addFriendBtn.addEventListener('click', () => {
+                const name = friendNameInput.value.trim();
+                if (name) {
+                    if (friends.includes(name)) {
+                        showError(friendError, `'${name}' is already in the group.`);
+                    } else {
+                        friends.push(name);
+                        balances[name] = 0.0;
+                        friendNameInput.value = '';
+                        renderFriendsList();
+                    }
+                } else {
+                     showError(friendError, 'Please enter a name.');
+                }
+                friendNameInput.focus();
+            });
+            
+            // Allow adding friend with Enter key
+            friendNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // prevent form submission
+                    addFriendBtn.click();
+                }
+            });
+
+            // Remove Friend
+            friendsList.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-friend-btn')) {
+                    const indexToRemove = parseInt(e.target.dataset.index, 10);
+                    const friendToRemove = friends[indexToRemove];
+                    
+                    // Remove from friends array
+                    friends.splice(indexToRemove, 1);
+                    // Delete from balances
+                    delete balances[friendToRemove];
+                    
+                    // Filter out expenses paid by this friend
+                    // A more complex app might re-assign payments, but for simplicity, we remove them.
+                    expenses = expenses.filter(exp => exp.payer !== friendToRemove);
+
+                    renderFriendsList();
+                    // Recalculate everything since expenses might have changed
+                    updateAllUI(); 
+                }
+            });
+
+            // Start App
+            startAppBtn.addEventListener('click', () => {
+                if (friends.length >= 2) {
+                    // Hide setup, show main app
+                    friendsSetupSection.classList.add('hidden');
+                    mainAppSection.classList.remove('hidden');
+                    
+                    // Initial setup for main app
+                    populatePayerDropdown();
+                    updateAndRenderBalances(); // Renders initial zero balances
+                    calculateAndRenderSettlements(); // Renders "all settled"
+                }
+            });
+
+            // Add Expense
+            expenseForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Stop page from reloading
+                
+                const description = expenseDescription.value.trim();
+                const amount = parseFloat(expenseAmount.value);
+                const payer = expensePayer.value;
+
+                // Validation
+                if (!description) {
+                    showError(expenseError, 'Please enter a description.');
+                    expenseDescription.focus();
+                    return;
+                }
+                if (isNaN(amount) || amount <= 0) {
+                     showError(expenseError, 'Please enter a valid amount.');
+                     expenseAmount.focus();
+                    return;
+                }
+                if (!payer) {
+                    showError(expenseError, 'Please select a payer.');
+                    expensePayer.focus();
+                    return;
+                }
+                
+                // Add to state
+                expenses.push({ description, amount, payer });
+                
+                // Update UI
+                updateAllUI();
+                
+                // Reset form
+                expenseDescription.value = '';
+                expenseAmount.value = '';
+                expenseDescription.focus();
+            });
+
+            // --- INITIAL RENDER ---
+            renderFriendsList();
+        });
+    </script>
+</body>
+</html>
