@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalMetrics Pro - Advanced BMI Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .result-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .unit-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .unit-group select {
+            flex: 1;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .bmi-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .bmi-main-result {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .bmi-category {
+            font-size: 1.3em;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .details-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        .detail-item {
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .weight-loss {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .healthy-range {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .quote {
+            font-style: italic;
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid;
+            font-size: 1.1em;
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            padding: 10px;
+            background: #ffeaea;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .speedometer-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .speedometer {
+            position: relative;
+            width: 200px;
+            height: 100px;
+            margin: 0 auto 10px;
+        }
+
+        .speedometer-bg {
+            width: 200px;
+            height: 100px;
+            border-radius: 100px 100px 0 0;
+            background: conic-gradient(
+                from 0.25turn at 50% 100%,
+                #3498db 0% 25%,
+                #2ecc71 25% 41.66%,
+                #f39c12 41.66% 58.33%,
+                #e74c3c 58.33% 100%
+            );
+            position: relative;
+            overflow: hidden;
+        }
+
+        .speedometer-center {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #2c3e50;
+            border-radius: 50%;
+        }
+
+        .speedometer-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform-origin: bottom center;
+            width: 4px;
+            height: 90px;
+            background: #2c3e50;
+            border-radius: 2px;
+            transition: transform 1s ease-out;
+        }
+
+        .bmi-markers {
+            display: flex;
+            justify-content: space-between;
+            width: 200px;
+            margin: 0 auto;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VitalMetrics Pro</h1>
+            <div class="subtitle">Advanced Body Mass Index Assessment System</div>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" placeholder="Enter your name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="height">Height</label>
+                    <div class="unit-group">
+                        <input type="number" id="height" placeholder="Enter height" step="0.1">
+                        <select id="height_unit">
+                            <option value="cm">cm</option>
+                            <option value="feet">feet</option>
+                            <option value="meters">meters</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="weight">Weight</label>
+                    <div class="unit-group">
+                        <input type="number" id="weight" placeholder="Enter weight" step="0.1">
+                        <select id="weight_unit">
+                            <option value="kg">kg</option>
+                            <option value="pounds">pounds</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="calculate-btn" onclick="calculateBMI()">
+                    Calculate BMI
+                </button>
+                
+                <div id="error" class="error hidden"></div>
+            </div>
+            
+            <div class="result-section">
+                <div id="result" class="hidden">
+                    <div class="bmi-header">
+                        <h3 id="userGreeting"></h3>
+                        <div class="bmi-main-result" id="bmiValue"></div>
+                        <div class="bmi-category" id="category"></div>
+                    </div>
+
+                    <div class="speedometer-container">
+                        <div class="speedometer">
+                            <div class="speedometer-bg"></div>
+                            <div class="speedometer-needle" id="needle"></div>
+                            <div class="speedometer-center"></div>
+                        </div>
+                        <div class="bmi-markers">
+                            <span>15</span>
+                            <span>18.5</span>
+                            <span>25</span>
+                            <span>30</span>
+                            <span>40</span>
+                        </div>
+                    </div>
+
+                    <div class="details-section" id="detailsSection">
+                        <div class="detail-item">
+                            <span class="detail-label">Healthy BMI range:</span> 
+                            <span class="healthy-range">18.5 kg/m² - 25 kg/m²</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Healthy weight for the height:</span> 
+                            <span class="healthy-range" id="healthyWeightRange"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Weight to reach BMI of 25:</span> 
+                            <span class="weight-loss" id="weightToLose"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">BMI Prime:</span> 
+                            <span id="bmiPrime"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Ponderal Index:</span> 
+                            <span id="ponderalIndex"></span> kg/m³
+                        </div>
+                    </div>
+                    
+                    <div class="quote" id="quote"></div>
+                </div>
+                
+                <div id="placeholder">
+                    <h3>Your Results Will Appear Here</h3>
+                    <p>Enter your details and click "Calculate BMI" to see your comprehensive health assessment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateBMI() {
+            const name = document.getElementById('name').value;
+            const height = document.getElementById('height').value;
+            const weight = document.getElementById('weight').value;
+            const height_unit = document.getElementById('height_unit').value;
+            const weight_unit = document.getElementById('weight_unit').value;
+            const errorDiv = document.getElementById('error');
+            
+            errorDiv.classList.add('hidden');
+            
+            if (!height || !weight || parseFloat(height) <= 0 || parseFloat(weight) <= 0) {
+                showError('Please enter valid positive numbers for height and weight.');
+                return;
+            }
+            
+            const btn = document.querySelector('.calculate-btn');
+            btn.textContent = 'Calculating...';
+            btn.disabled = true;
+            
+            fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    height: parseFloat(height),
+                    weight: parseFloat(weight),
+                    height_unit: height_unit,
+                    weight_unit: weight_unit
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    displayResults(data);
+                }
+            })
+            .catch(error => {
+                showError('An error occurred while calculating BMI.');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                btn.textContent = 'Calculate BMI';
+                btn.disabled = false;
+            });
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+        
+        function displayResults(data) {
+            const resultDiv = document.getElementById('result');
+            const placeholder = document.getElementById('placeholder');
+            
+            placeholder.classList.add('hidden');
+            resultDiv.classList.remove('hidden');
+            
+            // Update user greeting
+            const greeting = data.name ? `Health Assessment for ${data.name}` : 'Your Health Assessment';
+            document.getElementById('userGreeting').textContent = greeting;
+            
+            // Update BMI value and category
+            document.getElementById('bmiValue').textContent = `BMI = ${data.bmi}`;
+            
+            const categoryDiv = document.getElementById('category');
+            const categoryText = data.category_class ? 
+                `${data.category} (${data.category_class})` : data.category;
+            categoryDiv.textContent = categoryText;
+            categoryDiv.style.color = data.color;
+            categoryDiv.style.border = `2px solid ${data.color}`;
+            categoryDiv.style.background = `${data.color}15`;
+            
+            // Update detailed information
+            document.getElementById('healthyWeightRange').textContent = 
+                `${data.healthy_weight_range[0]} kg - ${data.healthy_weight_range[1]} kg`;
+            
+            document.getElementById('weightToLose').textContent = 
+                data.weight_to_lose > 0 ? 
+                `Lose ${data.weight_to_lose} kg to reach a BMI of 25 kg/m²` :
+                'Within healthy weight range';
+            
+            document.getElementById('bmiPrime').textContent = data.bmi_prime;
+            document.getElementById('ponderalIndex').textContent = data.ponderal_index;
+            
+            // Update details section border color
+            document.getElementById('detailsSection').style.borderLeftColor = data.color;
+            
+            // Update quote
+            const quoteDiv = document.getElementById('quote');
+            quoteDiv.textContent = `"${data.quote}"`;
+            quoteDiv.style.borderLeftColor = data.color;
+            quoteDiv.style.color = data.color;
+            quoteDiv.style.background = `${data.color}15`;
+            
+            // Update speedometer needle
+            const needle = document.getElementById('needle');
+            needle.style.transform = `rotate(${data.speedometer_angle}deg)`;
+        }
+    </script>
+</body>
+</html>
