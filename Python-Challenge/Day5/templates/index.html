@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Universal Converter</title>
+    <style>
+        /* Pleasant, light colors */
+        :root {
+            --bg-color: #f0f8ff; /* Alice Blue - soft, cool background */
+            --card-bg: #ffffff;
+            --primary-color: #4682b4; /* Steel Blue - a pleasant, strong accent */
+            --success-color: #3cb371; /* Medium Sea Green for results */
+            --border-color: #e0ffff; /* Light Cyan */
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 10px; /* Reduced padding */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            /* Full viewport width needed for four columns */
+            width: 98vw; 
+            max-width: none; /* Override max-width */
+            
+            display: grid;
+            /* *** KEY MODIFICATION HERE ***
+            Forces exactly 4 columns of equal width (1fr)
+            */
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 15px; /* Reduced gap */
+            
+            /* Ensures everything fits on one line */
+            overflow-x: hidden; 
+        }
+
+        .converter-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px; /* Slight reduction */
+            padding: 15px; /* Reduced padding */
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            /* Ensures text and elements fit within the narrow column */
+            min-width: 0; 
+        }
+        
+        .converter-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            grid-column: 1 / -1; /* Span across all 4 columns */
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--primary-color);
+            font-size: 1.8em; /* Adjusted size */
+        }
+
+        h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 3px;
+            font-size: 1.1em; /* Adjusted size */
+            white-space: nowrap; /* Prevents heading from wrapping */
+        }
+
+        label {
+            display: block;
+            margin-top: 8px;
+            margin-bottom: 3px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px; /* Reduced padding */
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9em;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #356b9c;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 1.1em;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .error {
+            padding: 10px;
+            background-color: #ff6347;
+            color: white;
+            border-radius: 4px;
+            font-weight: 500;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+        
+        small {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.75em;
+            color: #777;
+            line-height: 1.2;
+        }
+
+        /* Hide the scrollbar if it appears horizontally due to padding, but 
+           allow content to still be readable */
+        /* If the screen is very small, the content will be clipped,
+           but this is required to avoid horizontal scrolling */
+        @media screen and (max-width: 1400px) {
+            .container {
+                overflow-x: auto; /* Re-introduce scroll if necessary on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🌎 Universal Real-Time Converter</h1>
+
+        {% if error_message %}
+            <div class="error">{{ error_message }}</div>
+        {% endif %}
+
+        <div class="converter-card">
+            <h3>💱 Currency Converter</h3>
+            <form method="POST">
+                <input type="hidden" name="converter_type" value="currency">
+                
+                <label for="currency_amount">Amount:</label>
+                <input type="number" step="0.01" name="currency_amount" placeholder="Amount" required value="1.0">
+
+                <label for="currency_from">From:</label>
+                <select name="currency_from" required>
+                    {% for code in currency_codes %}
+                    <option value="{{ code }}" {% if code == currency_from %}selected{% endif %}>{{ code }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="currency_to">To:</label>
+                <select name="currency_to" required>
+                    {% for code in currency_codes %}
+                    <option value="{{ code }}" {% if code == currency_to %}selected{% endif %}>{{ code }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Convert</button>
+                <div class="result">{{ currency_result }}</div>
+                <small>INR to USD (Real-time)</small>
+            </form>
+        </div>
+
+        <div class="converter-card">
+            <h3>🌡️ Temperature Converter</h3>
+            <form method="POST">
+                <input type="hidden" name="converter_type" value="temperature">
+
+                <label for="temp_amount">Amount:</label>
+                <input type="number" step="0.01" name="temp_amount" placeholder="Temperature" required value="25.0">
+
+                <label for="temp_from">From:</label>
+                <select name="temp_from" required>
+                    <option value="C" {% if temp_from == 'C' %}selected{% endif %}>C</option>
+                    <option value="F" {% if temp_from == 'F' %}selected{% endif %}>F</option>
+                </select>
+
+                <label for="temp_to">To:</label>
+                <select name="temp_to" required>
+                    <option value="F" {% if temp_to == 'F' %}selected{% endif %}>F</option>
+                    <option value="C" {% if temp_to == 'C' %}selected{% endif %}>C</option>
+                </select>
+
+                <button type="submit">Convert</button>
+                <div class="result">{{ temp_result }}</div>
+                <small>C to F</small>
+            </form>
+        </div>
+
+        <div class="converter-card">
+            <h3>📏 Length Converter</h3>
+            <form method="POST">
+                <input type="hidden" name="converter_type" value="length">
+
+                <label for="length_amount">Amount:</label>
+                <input type="number" step="0.001" name="length_amount" placeholder="Length" required value="100.0">
+
+                <label for="length_from">From:</label>
+                <select name="length_from" required>
+                    <option value="cm" {% if length_from == 'cm' %}selected{% endif %}>cm</option>
+                    <option value="m" {% if length_from == 'm' %}selected{% endif %}>m</option>
+                    <option value="inches" {% if length_from == 'inches' %}selected{% endif %}>in</option>
+                    <option value="ft" {% if length_from == 'ft' %}selected{% endif %}>ft</option>
+                </select>
+
+                <label for="length_to">To:</label>
+                <select name="length_to" required>
+                    <option value="inches" {% if length_to == 'inches' %}selected{% endif %}>in</option>
+                    <option value="cm" {% if length_to == 'cm' %}selected{% endif %}>cm</option>
+                    <option value="m" {% if length_to == 'm' %}selected{% endif %}>m</option>
+                    <option value="ft" {% if length_to == 'ft' %}selected{% endif %}>ft</option>
+                </select>
+                
+                <button type="submit">Convert</button>
+                <div class="result">{{ length_result }}</div>
+                <small>cm to inches</small>
+            </form>
+        </div>
+
+        <div class="converter-card">
+            <h3>⚖️ Weight Converter</h3>
+            <form method="POST">
+                <input type="hidden" name="converter_type" value="weight">
+
+                <label for="weight_amount">Amount:</label>
+                <input type="number" step="0.001" name="weight_amount" placeholder="Weight" required value="1.0">
+
+                <label for="weight_from">From:</label>
+                <select name="weight_from" required>
+                    <option value="kg" {% if weight_from == 'kg' %}selected{% endif %}>kg</option>
+                    <option value="lbs" {% if weight_from == 'lbs' %}selected{% endif %}>lbs</option>
+                    <option value="g" {% if weight_from == 'g' %}selected{% endif %}>g</option>
+                </select>
+
+                <label for="weight_to">To:</label>
+                <select name="weight_to" required>
+                    <option value="lbs" {% if weight_to == 'lbs' %}selected{% endif %}>lbs</option>
+                    <option value="kg" {% if weight_to == 'kg' %}selected{% endif %}>kg</option>
+                    <option value="g" {% if weight_to == 'g' %}selected{% endif %}>g</option>
+                </select>
+
+                <button type="submit">Convert</button>
+                <div class="result">{{ weight_result }}</div>
+                <small>kg to lbs</small>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>
