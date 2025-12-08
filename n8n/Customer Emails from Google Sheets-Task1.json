@@ -1,0 +1,210 @@
+{
+  "name": "Customer Emails from Google Sheets-Task1",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "ec7e481b-bcaf-4161-9a2c-9f3fe33664cf",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12Jmkkjgqk5WmtsnIsEY9fLtzY6ekgk9NH7k5RY5ED1o",
+          "mode": "list",
+          "cachedResultName": "CustomerEmail",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12Jmkkjgqk5WmtsnIsEY9fLtzY6ekgk9NH7k5RY5ED1o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12Jmkkjgqk5WmtsnIsEY9fLtzY6ekgk9NH7k5RY5ED1o/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "d56a167b-7867-4443-a443-4a1c3c7ff9be",
+      "name": "Get Customers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        304,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "drB0VR7JJoNstHpw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get Customers').item.json.Email }}",
+        "subject": "Hurray!!! - Welcome Aboard to SupportPro!!!",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        864,
+        0
+      ],
+      "id": "f0f0b817-929d-4f87-a8fb-2948ed838808",
+      "name": "Send a message",
+      "webhookId": "c51c7e51-6dad-4206-ac2c-fe140646cad6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NAm3Wk7hUFm2F7Cj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write an email for {{ $json.Name }} based on their area of interet - {{ $json['Area of interest'] }}",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Role: You are an expert Email generator for a new customer.\nTask: Generate an email to customer. Each email should be unique based on their Name and Area of interest provided.\nContext: \n1.  User should be provided a Greeting message as \" Welcome onboard to our suggestion portal SuggestPro.com\"\n2. User should be suggested with detailed description for 2 lines about their individual area of interest. if there are multiple areas of interest, provide details about each topic for a single line.\n3. User can be provided with suggestions on websites to visit, places to visit, cheap booking options..etc\n4. User should be provided an option to reach us back if there are any further queries.\n5. Email should end with Thanks and Regards, SuggestPro.\n6. Email should be in proper HTML format and readable with notations.\n\nExample:\nDear Selva,\n\nGreetings for the day!!\n\nWelcome onboard to our suggestion portal SuggestPro.com!\n\nBased on your areas of interest below are the options you can consider.\n1. Technology learnings can be found in https://www.geeksforgeeks.org/ where you will find topics on various technologies.\n2. Details about AI can be found in socialeagle.com\n\nFor further queries, kindly reach us at support@supportpro.com\n\nThanks and Regards,\nTeam - SupportPro\n\nTone: Professional English email to be written with polite tone."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        512,
+        0
+      ],
+      "id": "5eae5754-2caa-435e-83d3-20b8f2dc764b",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        208
+      ],
+      "id": "6df9780d-8d7b-45e8-b41f-56fc0e5216c4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "aXE2SH614tyrBSE7",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        208
+      ],
+      "id": "62708974-f986-481a-bb81-295d0b794b29",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "BNJcowL0qjp7sRo3",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Customers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Customers": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9606ff5b-ff1b-41f0-a75d-5536b87f3862",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b1222dac4d67db3503c0233c8035c261fa16396bac4f7c31609872a91a01673"
+  },
+  "id": "5ecWxcgfiswFEX7S",
+  "tags": []
+}

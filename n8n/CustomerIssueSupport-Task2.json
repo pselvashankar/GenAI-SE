@@ -1,0 +1,203 @@
+{
+  "name": "CustomerIssueSupport-Task2",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $json.Message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        -80
+      ],
+      "id": "8c694fec-fe88-4901-9848-0d382f7cf642",
+      "name": "Reply to a message",
+      "webhookId": "4b826ad8-9460-465c-8b11-4c47f1d90864",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NAm3Wk7hUFm2F7Cj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cb44c6b3-6c6b-4114-b704-6b94848b909e",
+              "name": "Message",
+              "value": "={{(() => {\n  // Get the dynamic ticket reference from previous node\n  const ticketRef = $('GenerateTicket').item.json.ticketReference\n\n  // Build an HTML-formatted message\n  const message = `\n    <div style=\"font-family: Arial, sans-serif; color: #333;\">\n      <p>Hello! Thank you for contacting <strong>Support</strong>.</p>\n      <p>Your ticket reference is \n        <strong style=\"color:#007BFF;\">${ticketRef}</strong>.\n      </p>\n      <p>Our support team is looking into your request and will get back to you in \n        <strong>3 working days</strong>.\n      </p>\n      <p>Best regards,<br>\n      <em>The Support Team</em></p>\n    </div>\n  `;\n\n  // Return the HTML message\n  return message.trim();\n})()}}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -592,
+        -80
+      ],
+      "id": "2205fe06-a414-4c87-a40c-5abadd14c264",
+      "name": "Generate Reply Email"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1376,
+        -80
+      ],
+      "id": "1e7ca2e1-7e06-4c89-a86f-fe2d4d43a629",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NAm3Wk7hUFm2F7Cj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A22DRUWKC",
+          "mode": "list",
+          "cachedResultName": "all-n8ndemo"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -768,
+        -80
+      ],
+      "id": "c5437868-1d90-48ad-8960-e5dadee6c61a",
+      "name": "Send a message",
+      "webhookId": "0317abb5-1410-45af-b28f-829dff03cadf",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "jw9Tr2wQsj6FjvN1",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate a random number between 10000 and 99999\nconst randomNumber = Math.floor(Math.random() * 90000) + 10000;\n\n// Create the ticket reference starting with \"REQ\"\nconst ticketRef = `REQ${randomNumber}`;\n\n// Return as n8n item\nreturn [\n  {\n    json: {\n      ticketReference: ticketRef\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1168,
+        -80
+      ],
+      "id": "83569748-20c7-4826-a3ac-caa9c55d36ea",
+      "name": "GenerateTicket"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all email items from Gmail Trigger\nconst emails = $('Gmail Trigger').all();\n\n// Map through each email and format a Slack message\nreturn emails.map(email => {\n  const data = email.json;\n  \n\n  const from = $('Gmail Trigger').first().json.headers.from || \"Unknown Sender\";\n  const subject = data.subject || data.Subject || \"No Subject\";\n  const snippet = data.text || \"(No message preview available)\";\n  const TicketRef = $input.first().json.ticketReference\n\n  // Format Slack message text\n  const slackMessage = `\n*📨 New Email Alert!*\n* Ticket : ${TicketRef}\n*From:* ${from}\n*Subject:* ${subject}\n\n*Snippet:*\n${snippet}\n`;\n  // Return each item as a separate object\n  return {\n    json: {\n      text: slackMessage,\n      from,\n      subject,\n      snippet\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        -80
+      ],
+      "id": "53e47182-b627-4015-8218-96b22957ad76",
+      "name": "Generate Slack Message"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Generate Reply Email": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Generate Reply Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "GenerateTicket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GenerateTicket": {
+      "main": [
+        [
+          {
+            "node": "Generate Slack Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Slack Message": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "aeb2fd31-c458-4a5d-8ed3-3f216eedd095",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b1222dac4d67db3503c0233c8035c261fa16396bac4f7c31609872a91a01673"
+  },
+  "id": "heuyCblgL6t5nypE",
+  "tags": []
+}

@@ -1,0 +1,142 @@
+{
+  "name": "Slack Poster - Task3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -128
+      ],
+      "id": "f04b5334-50a0-474e-98f8-ab990adc5329",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "channel",
+        "operation": "history",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A22RHEZH8",
+          "mode": "list",
+          "cachedResultName": "n8n-poster"
+        },
+        "limit": 1,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        -128
+      ],
+      "id": "157ccd48-f255-495c-821d-93fed4943b55",
+      "name": "Get the history of a channel",
+      "webhookId": "78beffa2-d9f5-4bc6-a44c-05131cf871cd",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "jw9Tr2wQsj6FjvN1",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "=You are an poster creation expert for offer promotions. Generate a poster for the topic  {{ $json.blocks[0].elements[0].elements[0].text }} provided. Randomly choose image based on topic and display the offer percentage provided.provide the image with less size",
+        "options": {
+          "size": "1024x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        -128
+      ],
+      "id": "ccca1986-1c31-44a5-a725-f037488edcf9",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "G1Kc9GHNT1CrAbrC",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "options": {
+          "channelId": "C0A22RHEZH8",
+          "fileName": "={{ $json.fileName }}"
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        336,
+        -128
+      ],
+      "id": "d1fbfc16-a6ae-45f1-bb1f-c8ec7edf8cb0",
+      "name": "Upload a file",
+      "webhookId": "b2726479-a961-4730-a474-d969072e8468",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "jw9Tr2wQsj6FjvN1",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get the history of a channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get the history of a channel": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Upload a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a74bdfd5-fc00-4c8e-bac5-e2b76ebb789e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b1222dac4d67db3503c0233c8035c261fa16396bac4f7c31609872a91a01673"
+  },
+  "id": "TGwpLRfPpU9VcmvY",
+  "tags": []
+}
